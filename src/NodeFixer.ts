@@ -1,7 +1,7 @@
 import { Fixer, IRawParams } from './Fixer';
 import stringifyOptions from './stringifyOptions';
 
-type Fetcher = (url: string) => Promise<{
+type Fetcher = (...param: Parameters<typeof window.fetch> ) => Promise<{
   readonly json: () => any;
 }>;
 
@@ -31,8 +31,10 @@ class NodeFixer extends Fixer {
     );
 
     const url = `${this.basicOptions.baseUrl}${path}`;
-
-    const response = await this.fetch(`${url}?${stringifyOptions(filteredOptions)}`);
+   
+    const response = await this.fetch(`${url}?${stringifyOptions(filteredOptions)}`, {
+      headers: {'apikey': accessKey}
+    });
 
     let jsonResponse;
     try {
